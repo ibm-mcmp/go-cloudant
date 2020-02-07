@@ -40,6 +40,7 @@ type Query struct {
 	Sort     []interface{}          `json:"sort,omitempty"`
 	Limit    int                    `json:"limit,omitempty"`
 	Skip     int                    `json:"skip,omitempty"`
+	UseIndex []string               `json:"use_index,omitempty"`
 }
 
 // Index query struct
@@ -56,6 +57,14 @@ type Index struct {
 func NewClient(username string, password string) (*Client, error) {
 	auth := couchdb.BasicAuth(username, password)
 	url := fmt.Sprintf("https://%s.cloudant.com", username)
+	couchClient, err := couchdb.NewClient(url, nil)
+	couchClient.SetAuth(auth)
+	return &Client{Client: couchClient, username: username, password: password}, err
+}
+
+// NewClient2 ...
+func NewClient2(username, password, url string) (*Client, error) {
+	auth := couchdb.BasicAuth(username, password)
 	couchClient, err := couchdb.NewClient(url, nil)
 	couchClient.SetAuth(auth)
 	return &Client{Client: couchClient, username: username, password: password}, err
@@ -138,6 +147,32 @@ func (db *DB) SearchDocument(query Query) (result []interface{}, err error) {
 		return nil, errs[0]
 	}
 	return data.Docs, nil
+}
+
+// SearchDoc ...
+func (db *DB) SearchDoc(query Query, resultData interface{}) error {
+	req := request.New()
+	path := "/_find"
+	_, _, errs := req.SetBasicAuth(db.username, db.password).Post(db.path + path).Send(query).EndStruct(&resultData)
+
+	if errs != nil {
+		return errs[0]
+	}
+	return nil
+}
+
+// BulkUpdateDocs ...
+func (db *DB) BulkUpdateDocs(documents interface{}) error {
+	req := request.New()
+	path := "/_bulk_docs"
+
+	var resp interface{}
+	_, _, errs := req.SetBasicAuth(db.username, db.password).Post(db.path + path).Send(&documents).EndStruct(&resp)
+
+	if errs != nil {
+		return errs[0]
+	}
+	return nil
 }
 
 // SetIndex ...
@@ -242,4 +277,14 @@ func (ddoc *DesignDocument) View(db *DB, view string) (*ViewResp, error) {
 		return nil, errs[len(errs)-1]
 	}
 	return body, nil
+}
+
+//DeleteDB ...
+func (db *DB) DeleteDB() error {
+	req := request.New()
+	_, _, errs := req.SetBasicAuth(db.username, db.password).Delete(db.path).End()
+	if errs != nil {
+		return errs[0]
+	}
+	return nil
 }
