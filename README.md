@@ -14,7 +14,7 @@ once you change any of the dependencies in order to pass the build.
 
 ## Usage
 
-    import "github.com/IBM-Bluemix/go-cloudant"
+    import "github.com/ibm-mcmp/go-cloudant"
 
 For detailed usage, check cloudant_test.go
 

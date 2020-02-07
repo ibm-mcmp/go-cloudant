@@ -1,4 +1,4 @@
-package: github.com/IBM-Bluemix/go-cloudant
+package: github.com/ibm-mcmp/go-cloudant
 import:
 - package: github.com/parnurzeal/gorequest
   version: ~0.2.14
