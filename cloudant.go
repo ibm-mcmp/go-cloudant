@@ -7,6 +7,7 @@ import (
 
 	request "github.com/parnurzeal/gorequest"
 	couchdb "github.com/timjacobi/go-couchdb"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // Client ...
@@ -35,12 +36,13 @@ type Options couchdb.Options
 
 // Query ...
 type Query struct {
-	Selector map[string]interface{} `json:"selector"`
-	Fields   []string               `json:"fields,omitempty"`
-	Sort     []interface{}          `json:"sort,omitempty"`
-	Limit    int                    `json:"limit,omitempty"`
-	Skip     int                    `json:"skip,omitempty"`
-	UseIndex []string               `json:"use_index,omitempty"`
+	Selector  map[string]interface{} `json:"selector"`
+	Fields    []string               `json:"fields,omitempty"`
+	Sort      []interface{}          `json:"sort,omitempty"`
+	Limit     int                    `json:"limit,omitempty"`
+	Skip      int                    `json:"skip,omitempty"`
+	UseIndex  []string               `json:"use_index,omitempty"`
+	Collation *options.Collation
 }
 
 // Index query struct
